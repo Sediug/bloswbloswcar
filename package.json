@@ -1,0 +1,48 @@
+{
+  "name": "bloswbloswcar",
+  "version": "0.0.1",
+  "description": "A platform to publish your car trips and share expenses with other people.",
+  "main": "server.js",
+  "scripts": {},
+  "readme": "README.md",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:baumannzone/bloswbloswcar.git"
+  },
+  "keywords": [
+    "osw",
+    "OpenSourceWeekends"
+  ],
+  "author": {
+    "name": "Jorge Bauman",
+    "url": "https://github.com/baumannzone"
+  },
+  "contributors": [
+    {
+      "name": "Sebastián Cabanas",
+      "url": "https://github.com/Sediug"
+    }
+  ],
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/baumannzone/bloswbloswcar/issues"
+  },
+  "homepage": "https://github.com/baumannzone/bloswbloswcar#readme",
+  "dependencies": {
+
+  },
+  "devDependencies": {
+    "mocha-sinon": "1.1.6",
+    "sinon": "1.17.7",
+    "chai": "3.5.0",
+    "chai-fs": "1.0.0",
+    "gulp": "3.9.1",
+    "gulp-debug": "3.0.0",
+    "gulp-eslint": "3.0.1",
+    "gulp-istanbul": "1.1.1",
+    "gulp-jsdoc3": "1.0.1",
+    "gulp-mocha": "3.0.1",
+    "gulp-util": "3.0.8",
+    "mocha": "3.1.2"
+  }
+}
