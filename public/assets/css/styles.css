@@ -1,0 +1,36 @@
+/* Test purpose styles */
+body {
+    padding: 10px 50px 50px 50px;
+}
+
+.announcement {
+    width: 300px;
+    float: left;
+    margin-right: 10px;
+    margin-bottom: 10px;
+    border: 1px solid red;
+    padding: 10px;
+    background: #eee;
+}
+
+.announcement h3 {
+    text-align: center;
+    color: #92233c;
+}
+
+.announcement p {
+    text-align: justify;
+    color: rgb(56, 8, 8)
+}
+
+section.add-ad {
+    background: rgb(139, 67, 67);
+    margin-top: 10px;
+    width: 300px;
+    padding: 5px;
+    border: 1px solid #ddd;
+    float: left;
+    margin-bottom: 50px;
+}
+
+/* Test purpose styles */

@@ -1,0 +1,1 @@
+const DB_BASE_NAME = 'users';

@@ -1,5 +1,7 @@
 /* global Route */
 const app = require('pillars');
+const Announcement = require('./controller/Announcement');
+const User = require('./controller/User');
 
 // Configure pillars project
 app.config.debug = true;
@@ -12,16 +14,13 @@ app.services.get('http').configure({
 	port: process.env.PORT || 8080
 }).start();
 
-// Create DB instance.
-const goblinDB = require("@goblindb/goblindb")();
-
 // Static Files and main route
 const mainRoute = new Route({
 	id: 'main',
 	path: '/',
 	method: 'GET',
 	session: true
-}, function(gw) {
+}, gw => {
 	gw.file('./public/index.html');
 });
 
@@ -38,24 +37,24 @@ const estatics = new Route({
 const ioClientRoute = new Route({
 	id: 'ioClient',
 	path: '/socket.io.js',
-}, function(gw) {
+}, gw => {
 	gw.file('./node_modules/socket.io-client/dist/socket.io.js');
 });
 
 ioClientRoute.routes.add(new Route({
 	id: 'ioClientMap',
 	path: '/socket.io.js.map',
-}, function(gw) {
+}, gw => {
 	gw.file('./node_modules/socket.io-client/dist/socket.io.js.map');
 }));
 
-// Add controllers routes.
-const Announcement = require('./controller/Announcement');
+// Add controller routes.
 
-console.info('Adding routes...')
-mainRoute.routes.add(new Announcement(goblinDB)); // Socket.io listening on /announcement
+// Socket.io listening for announcements
+new Announcement();
 
 // Add routes to the server
+console.info('Adding routes...')
 app.routes.add(ioClientRoute);
 app.routes.add(mainRoute);
 app.routes.add(estatics);

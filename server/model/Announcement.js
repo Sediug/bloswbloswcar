@@ -1,6 +1,9 @@
+const dbManager = require('../lib/dbManager');
 const DB_BASE_NAME = 'announcements';
 
-module.exports = function(db) {
+module.exports = function() {
+	const db = dbManager();
+
 	/**
 	 * Gets an announcement given its id.
 	 * 
@@ -47,7 +50,7 @@ module.exports = function(db) {
 	let lastId = null;
 	function getNextId() {
 		if (lastId === null) {
-			const orderedIds = Object.keys(getAll()).sort(function(a, b) {
+			const orderedIds = Object.keys(getAll()).sort((a, b) => {
 				a = parseInt(a);
 				b = parseInt(b);
 
@@ -65,7 +68,7 @@ module.exports = function(db) {
 			lastId = orderedIds[orderedIds.length - 1] || 0;
 		}
 
-		return lastId++;
+		return ++lastId;
 	}
 
 	return {

@@ -4,7 +4,8 @@
   "description": "",
   "main": "server/main.js",
   "scripts": {
-    "start": "nodemon server/main.js"
+    "start": "node server/main.js",
+    "watch": "nodemon server/main.js"
   },
   "readme": "README.md",
   "repository": {
