@@ -3,11 +3,20 @@
 	<head>
 		<title>Bloswblowscar - OSW</title>
 
-		<!-- Load sripts -->
-		<script src="/socket.io.js"></script>
-		<script src="assets/js/main.js"></script>
+		<!-- Load styles -->
+		<link rel="stylesheet" href="/assets/css/styles.css" />
 	</head>
 	<body>
 		<h1>Bloswbloswcar app</h1>
+		<div class="ads"></div>
+		<section class="add-ad">
+			<input id="title" type="text" style="display: block;" placeholder="Title"></input>
+			<textarea id="description" style="display: block;" placeholder="Description"></textarea>
+			<button id="addAnAnnouncement" type="button">Add</button>
+		</section>
+
+		<!-- Load scripts -->
+		<script src="/socket.io.js"></script>
+		<script src="assets/js/main.js"></script>
 	</body>
 </html>

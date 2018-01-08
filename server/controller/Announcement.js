@@ -2,15 +2,16 @@
 const app = require('pillars'); // singleton
 const io = require('socket.io')(app.services.get('http').server, {serveClient: false});
 const AnnouncementModel = require('../model/Announcement');
+const dbManager = require('../lib/dbManager');
 
-module.exports = function(gdb) {
-	const model = new AnnouncementModel(gdb);
+module.exports = function() {
+	const model = new AnnouncementModel();
 
 	// Listen input channels
-	io.on('connection', function(socket) {
+	io.on('connection', socket => {
 		socket.emit('announcements', model.getAll());
 
-		socket.on('add', function(data) {
+		socket.on('add', data => {
 			if (validate(data)) {
 				data.id = null;
 				model.save(data);
@@ -19,7 +20,7 @@ module.exports = function(gdb) {
 			}
 		});
 
-		socket.on('update', function(data) {
+		socket.on('update', data => {
 			if (validate(data)) {
 				model.save(data);
 			} else {
@@ -28,21 +29,9 @@ module.exports = function(gdb) {
 		});
 	});
 
-	// Send output data
-	gdb.on('add', function(db) {
-		console.log('add', db);
-	});
-
-	gdb.on('update', function(db) {
-		console.log('update', db);
-	});
-
-	gdb.on('delete', function(db) {
-		console.log('delete', db);
-	});
-
-	gdb.on('change', function(db) {
-		console.log('change', db);
+	// Update clients on change data
+	dbManager().on('change', () => {
+		io.sockets.emit('announcements', model.getAll());
 	});
 
 	// Private functions
