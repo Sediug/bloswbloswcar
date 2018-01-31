@@ -1,18 +1,13 @@
 /* global Route */
 const app = require('pillars');
+const mongoose = require('mongoose');
+const config = require('./config');
 const Announcement = require('./controller/Announcement');
 const User = require('./controller/User');
 
 // Configure pillars project
 app.config.debug = true;
-// app.config.favicon = "img/favico.ico";
-
-// Starting the app
-console.info('Starting the app...');
-app.services.get('http').configure({
-	host: 'localhost',
-	port: process.env.PORT || 8080
-}).start();
+app.config.favicon = "img/favico.ico";
 
 // Static Files and main route
 const mainRoute = new Route({
@@ -48,8 +43,6 @@ ioClientRoute.routes.add(new Route({
 	gw.file('./node_modules/socket.io-client/dist/socket.io.js.map');
 }));
 
-// Add controller routes.
-
 // Socket.io listening for announcements
 new Announcement();
 
@@ -59,4 +52,19 @@ app.routes.add(ioClientRoute);
 app.routes.add(mainRoute);
 app.routes.add(estatics);
 
-console.info('Server running...')
+
+mongoose.connect(config.db, (err, res) => {
+	if (err) {
+		return console.error(`Database connection error: ${err}`)
+	}
+	console.info('Successfully connected to database server');
+	console.info('Starting the app...');
+
+	app.services.get('http').configure({
+		host: 'localhost',
+		port: config.port
+	}).start();
+
+	console.info('Server running...');
+});
+
