@@ -2,10 +2,10 @@
   "name": "bloswbloswcar",
   "version": "0.0.1",
   "description": "",
-  "main": "server/main.js",
+  "main": "server/app.js",
   "scripts": {
-    "start": "node server/main.js",
-    "watch": "nodemon server/main.js"
+    "start": "node server/app.js",
+    "watch": "nodemon server/app.js"
   },
   "readme": "README.md",
   "repository": {
@@ -32,23 +32,30 @@
   },
   "homepage": "https://github.com/baumannzone/bloswbloswcar#readme",
   "dependencies": {
-	"mongoose": "^4.13.9",
-	"pillars": "^0.6.4",
-	"socket.io": "2.0.4"
+    "@goblindb/goblindb": "0.0.10",
+    "dotenv": "^5.0.0",
+    "lodash.indexby": "^3.1.1",
+    "mongoose": "^4.13.9",
+    "passport": "^0.4.0",
+    "passport-github": "^1.1.0",
+    "passport-google-oauth20": "^1.0.0",
+    "passport-twitter": "^1.0.4",
+    "pillars": "^0.6.4",
+    "socket.io": "2.0.4"
   },
   "devDependencies": {
-	"chai": "3.5.0",
-	"chai-fs": "1.0.0",
-	"gulp": "3.9.1",
-	"gulp-debug": "3.0.0",
-	"gulp-eslint": "3.0.1",
-	"gulp-istanbul": "1.1.1",
-	"gulp-jsdoc3": "1.0.1",
-	"gulp-mocha": "3.0.1",
-	"gulp-util": "3.0.8",
-	"mocha": "3.1.2",
-	"mocha-sinon": "1.1.6",
-	"nodemon": "^1.14.7",
-	"sinon": "1.17.7"
+    "chai": "3.5.0",
+    "chai-fs": "1.0.0",
+    "gulp": "3.9.1",
+    "gulp-debug": "3.0.0",
+    "gulp-eslint": "3.0.1",
+    "gulp-istanbul": "1.1.1",
+    "gulp-jsdoc3": "1.0.1",
+    "gulp-mocha": "3.0.1",
+    "gulp-util": "3.0.8",
+    "mocha": "3.1.2",
+    "mocha-sinon": "1.1.6",
+    "nodemon": "^1.14.7",
+    "sinon": "1.17.7"
   }
 }
