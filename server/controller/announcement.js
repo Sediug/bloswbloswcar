@@ -1,20 +1,16 @@
 /* global Route */
 const app = require('pillars'); // singleton
 const io = require('socket.io')(app.services.get('http').server, {serveClient: false});
-const AnnouncementModel = require('../model/Announcement');
-const dbManager = require('../lib/dbManager');
+const db = require('../lib/announcementsDBManager');
 
 module.exports = function() {
-	const model = new AnnouncementModel();
-
 	// Listen input channels
 	io.on('connection', socket => {
-		socket.emit('announcements', model.getAll());
+		socket.emit('announcements', db.get());
 
 		socket.on('add', data => {
 			if (validate(data)) {
-				data.id = null;
-				model.save(data);
+				db.add(data);
 			} else {
 				console.error('Invalid payload data received on announcement add', data);
 			}
@@ -22,16 +18,24 @@ module.exports = function() {
 
 		socket.on('update', data => {
 			if (validate(data)) {
-				model.save(data);
+				db.update(data._id, data);
 			} else {
 				console.error('Invalid payload data received on announcement update', data);
+			}
+		});
+
+		socket.on('delete', id => {
+			if (id !== undefined) {
+				db.delete(id);
+			} else {
+				console.error('Missing announcement id to delete.');
 			}
 		});
 	});
 
 	// Update clients on change data
-	dbManager().on('change', () => {
-		io.sockets.emit('announcements', model.getAll());
+	db().on('change', () => {
+		io.sockets.emit('announcements', db.getAll());
 	});
 
 	// Private functions
