@@ -13,9 +13,10 @@ const mainRoute = new Route({
 
 const estatics = new Route({
 	id: 'estatics',
-	path: '/*:path',
+	path: '/assets/*:path',
+	session: true,
 	directory: {
-		path: './public',
+		path: './public/assets',
 		listing: true
 	}
 });
@@ -35,6 +36,7 @@ ioClientRoute.routes.add(new Route({
 	gw.file('./node_modules/socket.io-client/dist/socket.io.js.map');
 }));
 
+console.info('Adding main routes to the server.');
 // Add routes to the server
 routes.add(ioClientRoute);
 routes.add(mainRoute);

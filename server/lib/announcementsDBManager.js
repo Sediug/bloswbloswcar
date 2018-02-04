@@ -1,6 +1,7 @@
 const goblinDB = require("@goblindb/goblindb");
 const indexBy = require('lodash.indexby');
-const Announcement = require('./model/announcement');
+const moment = require('moment');
+const Announcement = require('../model/announcement');
 
 /**
  * Using goblin db as an announcements db manager, the data will be saved to mongodb aswell
@@ -8,22 +9,21 @@ const Announcement = require('./model/announcement');
  * not the best practice in the world but knowing this is a "for fun" project I want to test
  * Goblin DB in a production enviroment and this seens to be a good way to see how it works.
  */
-let goblin = null;
-
 module.exports = {
-	init: () => {
+	goblin: null,
+	init: function(done) {
 		// Create goblin instance and load announcements
-		goblin = goblinDB({mode: process.ensd.GOBLIN_DB_ENVIROMENT});
+		this.goblin = goblinDB({mode: process.env.GOBLIN_DB_ENVIROMENT});
 		Announcement.find({}, (err, announcements) => {
 			if (err) throw err;
-			goblin.set({
-				announcements: indexBy(announcements, obj => obj._id)
-			});
+			this.goblin.set({});
+			this.goblin.set(indexBy(announcements, obj => obj._id));
+			done();
 		});
 	},
-	get: (id) => {
+	get: function(id) {
 		if (id) {
-			const announcement = goblin.get('announcements.' + id);
+			const announcement = this.goblin.get(id);
 
 			if (announcement === undefined) {
 				throw Error(`The announcement with the id ${ id } does not exist`);
@@ -32,24 +32,27 @@ module.exports = {
 			return announcement;
 		}
 
-		return goblin.get();
+		return this.goblin.get();
 	},
-	add: (announcement) => {
+	add: function(announcement) {
+		console.log(moment(new Date()).format('L'));
+		announcement.created_dtm = moment(new Date()).format('L');
 		Announcement.create(announcement, (err, result) => {
 			if (err) throw err;
-			goblin.set(result, 'announcements.' + result._id);
+			this.goblin.set(result, String(result._id));
 		});
 	},
-	update: (id, announcement) => {
+	update: function(id, announcement) {
+		announcement.updated_dtm = moment(new Date()).format('L');
 		Announcement.findOneAndUpdate({_id: id}, announcement, (err, result) => {
 			if (err) throw err;
-			goblin.set(result, 'announcements.' + result._id);
+			this.goblin.set(result, String(result._id));
 		});
 	},
-	delete: (id) => {
+	delete: function(id) {
 		Announcement.deleteOne({ _id: id }, err => {
 			if (err) throw err;
-			goblin.set({deleted: true}, 'announcements.' + id);
+			this.goblin.set({deleted: true}, id);
 		});
 	}
 };
