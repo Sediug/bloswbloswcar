@@ -1,16 +1,22 @@
 const app = require('pillars');
 const mongoose = require('mongoose');
+
+// Load .env config.
 require('dotenv').config();
-require('./routes');
+
+// Configure passport and add it to pillars project.
 require('./passport');
 
-// Controllers
-const Announcement = require('./controller/announcement');
-const Oauth = require('./controller/oauth');
+// Load controllers
+require('./controller/users');
+require('./controller/announcements');
+
+// Add default routes to the pillars project.
+require('./routes');
 
 // Configure pillars project and connect to mongoDB
-app.config.debug = true;
-app.config.favicon = "img/favico.ico";
+app.config.debug = process.env.PILLARS_APP_DEBUG_MODE;
+// app.config.favicon = "favico.ico";
 
 mongoose.connect(process.env.MONGODB_URI, (err, res) => {
 	if (err) {
@@ -24,9 +30,6 @@ mongoose.connect(process.env.MONGODB_URI, (err, res) => {
 		port: process.env.PORT
 	}).start();
 
-	// Socket.io listening for announcements
-	new Announcement();
-
-	console.info('Server running...');
+	console.info(`Server running on http://${ process.env.HOST }:${ process.env.PORT }`);
 });
 
