@@ -1,9 +1,10 @@
 /* global io */
 
 // Announcements sockets config
-const socket = io.connect(window.document.location.href, {forceNew: true});
+const socket = io.connect('http://localhost:3001', {forceNew: true});
 
 socket.on('announcements', function(data) {
+	console.log(data);
 	render(data);
 });
 
@@ -22,6 +23,7 @@ btnAdd.addEventListener('click', e => {
 });
 
 function render(data) {
+	console.log(Object.keys(data));
 	adsContainer.innerHTML = Object.keys(data).map(k => {
 		const announcement = data[k];
 
