@@ -4,7 +4,7 @@ const TwitterStrategy = require('passport-twitter').Strategy;
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const GitHubStrategy = require('passport-github').Strategy;
 const User = require('./model/user');
-const callbackURL = `http://${ process.env.HOST }:${ process.env.PORT }`;
+const callbackURL = process.env.LOGIN_CALLBACK_URL;
 
 // Passport configuration.
 // Configure Passport authenticated session persistence.
@@ -18,7 +18,6 @@ passport.use(
 		consumerSecret: process.env.TWITTER_SECRET,
 		callbackURL
 	}, (token, tokenSecret, profile, callback)  => {
-		console.log(profile);
 		process.nextTick(() => {
 			User.findOrCreate(
 				{ githubId: profile.id },
@@ -35,7 +34,6 @@ passport.use(
 		scope: ['profile']
 	}, (token, tokenSecret, profile, callback)  => {
 		process.nextTick(() => {
-			console.log(profile);
 			User.findOrCreate(
 				{ googleId: profile.id },
 				(err, user) => callback(err, user)
@@ -50,7 +48,6 @@ passport.use(
 		callbackURL
 	}, (token, tokenSecret, profile, callback)  => {
 		process.nextTick(() => {
-			console.log(profile);
 			User.findOrCreate(
 				{ githubId: profile.id },
 				(err, user) => callback(err, user)
