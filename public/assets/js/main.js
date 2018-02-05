@@ -1,5 +1,4 @@
 /* global io */
-
 // Announcements sockets config
 const socket = io.connect(window.document.location.href, {forceNew: true});
 

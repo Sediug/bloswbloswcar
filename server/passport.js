@@ -4,7 +4,7 @@ const TwitterStrategy = require('passport-twitter').Strategy;
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const GitHubStrategy = require('passport-github').Strategy;
 const User = require('./model/user');
-const callbackURL = `http://127.0.0.1:${ process.env.PORT }`;
+const callbackURL = `http://${ process.env.HOST }:${ process.env.PORT }`;
 
 // Passport configuration.
 // Configure Passport authenticated session persistence.
