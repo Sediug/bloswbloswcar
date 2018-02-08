@@ -32,7 +32,7 @@ api.routes.add(new Route(
 api.routes.add(new Route(
 	{
 		id: 'getUser',
-		path:'/users:id',
+		path:'/users/:id',
 		method:['get']
 	},
 	gw => users.get(gw)
@@ -51,7 +51,7 @@ api.routes.add(new Route(
 api.routes.add(new Route(
 	{
 		id: 'getAnnouncement',
-		path:'/announcements:id',
+		path:'/announcements/:id',
 		method:['get']
 	},
 	gw => announcements.get(gw)
@@ -60,7 +60,7 @@ api.routes.add(new Route(
 api.routes.add(new Route(
 	{
 		id: 'postAnnouncement',
-		path:'/announcements:id',
+		path:'/announcements/:id',
 		method:['post']
 	},
 	gw => announcements.create(gw)
@@ -69,7 +69,7 @@ api.routes.add(new Route(
 api.routes.add(new Route(
 	{
 		id: 'getAnnouncement',
-		path:'/announcements:id',
+		path:'/announcements/:id',
 		method:['put']
 	},
 	gw => announcements.update(gw)
@@ -78,7 +78,7 @@ api.routes.add(new Route(
 api.routes.add(new Route(
 	{
 		id: 'getAnnouncement',
-		path:'/announcements:id',
+		path:'/announcements/:id',
 		method:['delete']
 	},
 	gw => announcements.delete(gw)
