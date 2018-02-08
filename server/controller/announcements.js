@@ -11,17 +11,22 @@ function updateSocketsDB(type, announcement) {
 	}
 }
 
+function validateId(gw, id) {
+	if (!id.match(/^[0-9a-fA-F]{24}$/)) {
+		gw.error(404, Error('El id enviado no es válido.'));
+	}
+}
+
 function get(gw) {
 	if (gw.pathParams.id) {
-		Announcement.findById(gw.pathParams.id, (err, announcement) => {
+		validateId(gw, gw.pathParams.id);
+		Announcement.findById(String(gw.pathParams.id), (err, announcement) => {
 			if (err) {
-				return gw.res.status(500).send({
-					message: `Error al realizar la petición: ${err}`
-				});
+				return gw.error(500, Error(`Error al realizar la petición: ${err}`));
 			}
 
 			if (!announcement) {
-				return gw.res.status(404).send({message: `El anuncio no existe`});
+				return gw.error(404, Error(`El anuncio no existe`));
 			}
 
 			gw.json(announcement);
@@ -29,9 +34,7 @@ function get(gw) {
 	} else {
 		Announcement.find({}, (err, announcements) => {
 			if (err) {
-				gw.res.status(500).send({
-					message: `Error al realizar la petición: ${err}`
-				});
+				return gw.error(500, Error(`Error al realizar la petición: ${err}`));
 			}
 
 			gw.json(announcements);
@@ -46,9 +49,7 @@ function create(gw) {
 
 	announcement.save((err, storedAnnouncement) => {
 		if (err) {
-			gw.res.status(500).send({
-				message: `Error al crear en la base de datos: ${err} `
-			});
+			return gw.error(500, Error(`Error al crear en la base de datos: ${err}`));
 		}
 
 		updateSocketsDB('create', storedAnnouncement);
@@ -57,6 +58,7 @@ function create(gw) {
 }
 
 function update(gw) {
+	validateId(gw, gw.pathParams.id);
 	const id = gw.pathParams.id;
 	const announcement = Object.assign({}, gw.content.params, { updated_dtm: Date.now });
 
@@ -66,9 +68,7 @@ function update(gw) {
 
 	Announcement.findByIdAndUpdate(id, announcement, (err, updatedAnnouncement) => {
 		if (err) {
-			gw.res.status(500).send({
-				message: `Error al actualizar el anuncio: ${err}`
-			});
+			gw.error(500, Error(`Error al actualizar el anuncio: ${err}`));
 		}
 
 		updateSocketsDB('update', updatedAnnouncement);
@@ -77,12 +77,11 @@ function update(gw) {
 }
 
 function deleteAnnouncement(gw) {
+	validateId(gw, gw.pathParams.id);
 	const id = gw.pathParams.id;
 
 	function error(err) {
-		gw.res.status(500).send({
-			message: `Error al borrar el anuncio: ${err}`
-		});
+		gw.error(500, Error(`Error al borrar el anuncio: ${err}`));
 	}
 
 	Announcement.findById(id, (err, announcement) => {

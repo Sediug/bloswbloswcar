@@ -2,7 +2,7 @@ const app = require('pillars');
 const mongoose = require('mongoose');
 
 // Load .env config.
-console.info('Loading .env.');
+console.info('Loading dotenv.');
 require('dotenv').config();
 
 // Configure passport and add it to pillars project.
