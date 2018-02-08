@@ -2,17 +2,20 @@ const app = require('pillars');
 const mongoose = require('mongoose');
 
 // Load .env config.
+console.info('Loading .env.');
 require('dotenv').config();
 
 // Configure passport and add it to pillars project.
+console.info('Configuring passport.');
 require('./passport');
 
-// Load controllers
-require('./controller/users');
-require('./controller/announcements');
-
-// Add default routes to the pillars project.
+// Add routes to the pillars project.
+console.info('Adding routes.');
 require('./routes');
+
+// Load and configure sockets
+console.info('Adding announcements socket.');
+require('./sockets/announcements');
 
 // Configure pillars project and connect to mongoDB
 app.config.debug = process.env.PILLARS_APP_DEBUG_MODE;

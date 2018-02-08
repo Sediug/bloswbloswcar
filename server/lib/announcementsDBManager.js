@@ -1,7 +1,16 @@
 const goblinDB = require("@goblindb/goblindb");
 const indexBy = require('lodash.indexby');
-const moment = require('moment');
 const Announcement = require('../model/announcement');
+
+function findAll(errorCb, cb) {
+	Announcement.find({}, (err, announcements) => {
+		if (err) {
+			errorCb(err);
+		} else {
+			cb(null, indexBy(announcements, obj => obj._id));
+		}
+	});
+}
 
 /**
  * Using goblin db as an announcements db manager, the data will be saved to mongodb aswell
@@ -11,22 +20,31 @@ const Announcement = require('../model/announcement');
  */
 module.exports = {
 	goblin: null,
+	initialized: false,
 	init: function(done) {
-		// Create goblin instance and load announcements
-		this.goblin = goblinDB({mode: process.env.GOBLIN_DB_ENVIROMENT});
-		Announcement.find({}, (err, announcements) => {
-			if (err) throw err;
-			this.goblin.set({});
-			this.goblin.set(indexBy(announcements, obj => obj._id));
+		if (this.initialized) {
 			done();
-		});
+			return;
+		}
+
+		// Create goblin instance and load announcements
+		try {
+			this.goblin = goblinDB({mode: process.env.GOBLIN_DB_ENVIROMENT});
+			findAll(done, announcements => {
+				this.goblin.set(announcements);
+				this.initialized = true;
+				done();
+			});
+		} catch(e) {
+			done(e.message);
+		}
 	},
-	get: function(id) {
+	get: function(id, errorCb) {
 		if (id) {
 			const announcement = this.goblin.get(id);
 
 			if (announcement === undefined) {
-				throw Error(`The announcement with the id ${ id } does not exist`);
+				errorCb(`The announcement with the id ${ id } does not exist`);
 			}
 
 			return announcement;
@@ -34,25 +52,44 @@ module.exports = {
 
 		return this.goblin.get();
 	},
-	add: function(announcement) {
-		console.log(moment(new Date()).format('L'));
-		announcement.created_dtm = moment(new Date()).format('L');
+	add: function(announcement, errorCb) {
+		announcement.created_dtm = Date.now();
 		Announcement.create(announcement, (err, result) => {
-			if (err) throw err;
+			if (err) {
+				errorCb(err);
+				return;
+			}
 			this.goblin.set(result, String(result._id));
 		});
 	},
-	update: function(id, announcement) {
-		announcement.updated_dtm = moment(new Date()).format('L');
+	update: function(id, announcement, errorCb) {
+		announcement.updated_dtm = Date.now();
 		Announcement.findOneAndUpdate({_id: id}, announcement, (err, result) => {
-			if (err) throw err;
+			if (err) {
+				errorCb(err);
+				return;
+			}
 			this.goblin.set(result, String(result._id));
 		});
 	},
-	delete: function(id) {
+	delete: function(id, errorCb) {
 		Announcement.deleteOne({ _id: id }, err => {
-			if (err) throw err;
-			this.goblin.set({deleted: true}, id);
+			if (err) {
+				errorCb(err);
+				return;
+			}
+			findAll(announcements => this.goblin.set(announcements));
 		});
+	},
+	updateGDB: function(errorCb, type, announcement) {
+		// When someone is updating data using the api.
+		if (this.initialized) {
+			// Update all goblin db when no params or deleting.
+			if (!type || type === 'delete' || !announcement) {
+				findAll(errorCb, announcements => this.goblin.set(announcements));
+			} else {
+				this.goblin.set(announcement, String(announcement._id));
+			}
+		}
 	}
 };

@@ -6,6 +6,10 @@ socket.on('announcements', function(data) {
 	render(data);
 });
 
+socket.on('announcementError', function(message) {
+	alert(message);
+});
+
 const btnAdd = document.getElementById('addAnAnnouncement');
 const adsContainer = document.querySelector('div.ads');
 const title = document.getElementById('title');

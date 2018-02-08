@@ -1,49 +1,99 @@
-/* global Route */
-const app = require('pillars'); // singleton
-const io = require('socket.io')(app.services.get('http').server, {serveClient: false});
-const db = require('../lib/announcementsDBManager');
+const Announcement = require('../model/announcement');
+const socketsDBManager = require('../lib/announcementsDBManager');
 
-module.exports = function() {
-	db.init(() => {
-		console.info(`Announcements socket listening on port ${ process.env.PORT }`);
-		// Listen input channels
-		io.on('connection', socket => {
-			socket.emit('announcements', db.get());
-
-			socket.on('add', data => {
-				if (validate(data)) {
-					db.add(data);
-				} else {
-					console.error('Invalid payload data received on announcement add', data);
-				}
-			});
-
-			socket.on('update', data => {
-				if (validate(data)) {
-					db.update(data._id, data);
-				} else {
-					console.error('Invalid payload data received on announcement update', data);
-				}
-			});
-
-			socket.on('delete', id => {
-				if (id !== undefined) {
-					db.delete(id);
-				} else {
-					console.error('Missing announcement id to delete.');
-				}
-			});
+function updateSocketsDB(type, announcement) {
+	try {
+		socketsDBManager.updateGDB(type, announcement, error => {
+			throw Error(error);
 		});
+	} catch(e) {
+		console.error(`Error updating goblin db: ${e.message}`);
+	}
+}
 
-		// Update clients on change data
-		db.goblin.on('change', () => {
-			// Timeout because of a bug in goblin. It has to be removed.
-			setTimeout(() => io.sockets.emit('announcements', db.get()), 100);
+function get(gw) {
+	if (gw.pathParams.id) {
+		Announcement.findById(gw.pathParams.id, (err, announcement) => {
+			if (err) {
+				return gw.res.status(500).send({
+					message: `Error al realizar la petición: ${err}`
+				});
+			}
+
+			if (!announcement) {
+				return gw.res.status(404).send({message: `El anuncio no existe`});
+			}
+
+			gw.json(announcement);
+		});
+	} else {
+		Announcement.find({}, (err, announcements) => {
+			if (err) {
+				gw.res.status(500).send({
+					message: `Error al realizar la petición: ${err}`
+				});
+			}
+
+			gw.json(announcements);
+		});
+	}
+}
+
+function create(gw) {
+	const params = gw.content.params;
+	const announcement = Object.assign(new Announcement(), params);
+	announcement.user_id = null; // Have to be changed for the id user creating this ann.
+
+	announcement.save((err, storedAnnouncement) => {
+		if (err) {
+			gw.res.status(500).send({
+				message: `Error al crear en la base de datos: ${err} `
+			});
+		}
+
+		updateSocketsDB('create', storedAnnouncement);
+		gw.json(storedAnnouncement);
+	})
+}
+
+function update(gw) {
+	const id = gw.pathParams.id;
+	const announcement = Object.assign({}, gw.content.params, { updated_dtm: Date.now });
+
+	if (announcement.created_dtm) {
+		delete announcement.created_dtm;
+	}
+
+	Announcement.findByIdAndUpdate(id, announcement, (err, updatedAnnouncement) => {
+		if (err) {
+			gw.res.status(500).send({
+				message: `Error al actualizar el anuncio: ${err}`
+			});
+		}
+
+		updateSocketsDB('update', updatedAnnouncement);
+		gw.json(updatedAnnouncement);
+	});
+}
+
+function deleteAnnouncement(gw) {
+	const id = gw.pathParams.id;
+
+	function error(err) {
+		gw.res.status(500).send({
+			message: `Error al borrar el anuncio: ${err}`
+		});
+	}
+
+	Announcement.findById(id, (err, announcement) => {
+		err && error(err);
+
+		announcement.remove(err => {
+			err && error(err);
+			updateSocketsDB('delete', announcement);
+			gw.json({ message: 'El anuncio ha sido eliminado con exito.' });
 		});
 	});
+}
 
-	// Private functions
-	function validate(data) {
-		return data !== null && typeof(data) === 'object' && !Array.isArray(data);
-	}
-}();
+module.exports = { get, create, update, delete: deleteAnnouncement };
