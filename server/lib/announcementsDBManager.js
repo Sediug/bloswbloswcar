@@ -7,7 +7,7 @@ function findAll(errorCb, cb) {
 		if (err) {
 			errorCb(err);
 		} else {
-			cb(null, indexBy(announcements, obj => obj._id));
+			cb(indexBy(announcements, obj => obj._id));
 		}
 	});
 }
@@ -30,6 +30,7 @@ module.exports = {
 		// Create goblin instance and load announcements
 		try {
 			this.goblin = goblinDB({mode: process.env.GOBLIN_DB_ENVIROMENT});
+			this.goblin.set({});
 			findAll(done, announcements => {
 				this.goblin.set(announcements);
 				this.initialized = true;
