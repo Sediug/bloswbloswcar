@@ -1,15 +1,4 @@
-const Announcement = require('../model/announcement');
-const socketsDBManager = require('../lib/announcementsDBManager');
-
-function updateSocketsDB(type, announcement) {
-	try {
-		socketsDBManager.updateGDB(type, announcement, error => {
-			throw Error(error);
-		});
-	} catch(e) {
-		console.error(`Error updating goblin db: ${e.message}`);
-	}
-}
+const dbManager = require('../lib/announcementsDBManager');
 
 function validateId(gw, id) {
 	if (!id.match(/^[0-9a-fA-F]{24}$/)) {
@@ -20,59 +9,42 @@ function validateId(gw, id) {
 function get(gw) {
 	if (gw.pathParams.id) {
 		validateId(gw, gw.pathParams.id);
-		Announcement.findById(String(gw.pathParams.id), (err, announcement) => {
+		dbManager.get(gw.pathParams.id, (err, announcement) => {
 			if (err) {
-				return gw.error(500, Error(`Error al realizar la petición: ${err}`));
+				return gw.error(404,  Error(`El anuncio no existe`));
 			}
 
-			if (!announcement) {
-				return gw.error(404, Error(`El anuncio no existe`));
-			}
-
-			gw.json(announcement);
+			gw.json(announcement, {deep: 0});
 		});
 	} else {
-		Announcement.find({}, (err, announcements) => {
-			if (err) {
-				return gw.error(500, Error(`Error al realizar la petición: ${err}`));
-			}
-
-			gw.json(announcements);
+		dbManager.get(null, (err, announcements) => {
+			gw.json(new Object(announcements), {deep: 0});
 		});
 	}
 }
 
 function create(gw) {
-	const params = gw.content.params;
-	const announcement = Object.assign(new Announcement(), params);
-	announcement.user_id = null; // Have to be changed for the id user creating this ann.
-
-	announcement.save((err, storedAnnouncement) => {
+	const data = Object.assign({}, gw.content.params);
+	dbManager.create(data, (err, storedAnnouncement) => {
 		if (err) {
 			return gw.error(500, Error(`Error al crear en la base de datos: ${err}`));
 		}
 
-		updateSocketsDB('create', storedAnnouncement);
-		gw.json(storedAnnouncement);
-	})
+		gw.json(storedAnnouncement, {deep: 0});
+	});
 }
 
 function update(gw) {
 	validateId(gw, gw.pathParams.id);
 	const id = gw.pathParams.id;
-	const announcement = Object.assign({}, gw.content.params, { updated_dtm: Date.now });
+	const data = Object.assign({}, gw.content.params);
 
-	if (announcement.created_dtm) {
-		delete announcement.created_dtm;
-	}
-
-	Announcement.findByIdAndUpdate(id, announcement, (err, updatedAnnouncement) => {
+	dbManager.update(id, data, (err, updatedAnnouncement) => {
 		if (err) {
-			gw.error(500, Error(`Error al actualizar el anuncio: ${err}`));
+			gw.error(500, Error(`Error al actualizar en la base de datos: ${err}`));
 		}
 
-		updateSocketsDB('update', updatedAnnouncement);
-		gw.json(updatedAnnouncement);
+		gw.json(updatedAnnouncement, {deep: 0});
 	});
 }
 
@@ -80,18 +52,12 @@ function deleteAnnouncement(gw) {
 	validateId(gw, gw.pathParams.id);
 	const id = gw.pathParams.id;
 
-	function error(err) {
-		gw.error(500, Error(`Error al borrar el anuncio: ${err}`));
-	}
+	dbManager.delete(id, (err, announcement) => {
+		if (err) {
+			gw.error(500, Error(`Error al eliminar el anuncio: ${err}`));
+		}
 
-	Announcement.findById(id, (err, announcement) => {
-		err && error(err);
-
-		announcement.remove(err => {
-			err && error(err);
-			updateSocketsDB('delete', announcement);
-			gw.json({ message: 'El anuncio ha sido eliminado con exito.' });
-		});
+		gw.json({ message: 'El anuncio ha sido eliminado con exito.' });
 	});
 }
 

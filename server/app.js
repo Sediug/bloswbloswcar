@@ -21,12 +21,13 @@ require('./sockets/announcements');
 app.config.debug = process.env.PILLARS_APP_DEBUG_MODE;
 // app.config.favicon = "favico.ico";
 
-mongoose.connect(process.env.MONGODB_URI, (err, res) => {
+console.info('Connecting to database.');
+mongoose.connect(process.env.MONGODB_URI, { useMongoClient: true }, err => {
 	if (err) {
-		return console.error(`Database connection error: ${err}`)
+		throw new Error(`Database connection error: ${err}`);
 	}
-	console.info('Successfully connected to database server.');
-	console.info('Starting app...');
+
+	console.info('Successfully connected to database server. Starting server...');
 
 	app.services.get('http').configure({
 		host: process.env.HOST,

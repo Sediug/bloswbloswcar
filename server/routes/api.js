@@ -1,7 +1,4 @@
 /* global Route */
-const announcements = require('../controller/announcements');
-const users = require('../controller/users');
-
 // Create api route.
 const api = new Route(
 	{
@@ -20,68 +17,16 @@ const api = new Route(
 );
 
 // Users
-api.routes.add(new Route(
-	{
-		id: 'getUsers',
-		path:'/users',
-		method:['get']
-	},
-	gw => users.get(gw)
-));
-
-api.routes.add(new Route(
-	{
-		id: 'getUser',
-		path:'/users/:id',
-		method:['get']
-	},
-	gw => users.get(gw)
-));
+const users = require('../controller/users');
+api.routes.add(new Route({ path:'/users', method:['get'] }, users.get));
+api.routes.add(new Route({ path:'/users/:id', method:['get'] }, users.get));
 
 // Announcements
-api.routes.add(new Route(
-	{
-		id: 'getAnnouncements',
-		path:'/announcements',
-		method:['get']
-	},
-	gw => announcements.get(gw)
-));
-
-api.routes.add(new Route(
-	{
-		id: 'getAnnouncement',
-		path:'/announcements/:id',
-		method:['get']
-	},
-	gw => announcements.get(gw)
-));
-
-api.routes.add(new Route(
-	{
-		id: 'postAnnouncement',
-		path:'/announcements/:id',
-		method:['post']
-	},
-	gw => announcements.create(gw)
-));
-
-api.routes.add(new Route(
-	{
-		id: 'getAnnouncement',
-		path:'/announcements/:id',
-		method:['put']
-	},
-	gw => announcements.update(gw)
-));
-
-api.routes.add(new Route(
-	{
-		id: 'getAnnouncement',
-		path:'/announcements/:id',
-		method:['delete']
-	},
-	gw => announcements.delete(gw)
-));
+const an = require('../controller/announcements');
+api.routes.add(new Route({ path:'/announcements', method:['get'] }, an.get));
+api.routes.add(new Route({ path:'/announcements/:id', method:['get'] }, an.get));
+api.routes.add(new Route({ path:'/announcements/:id', method:['post'] }, an.create));
+api.routes.add(new Route({ path:'/announcements/:id', method:['put'] }, an.update));
+api.routes.add(new Route({ path:'/announcements/:id', method:['delete'] }, an.delete));
 
 module.exports =  api;

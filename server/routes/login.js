@@ -5,7 +5,7 @@ const passport = require('passport');
 const loginTwitterUrl = '/login/twitter';
 const loginGoogleUrl = '/login/google';
 const loginGitHubUrl = '/login/github';
-const loginSuccess = '/login/view-session';
+const loginSuccess = '/login/session';
 
 // Create new Route container
 const login = new Route(
