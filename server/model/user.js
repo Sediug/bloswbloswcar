@@ -8,4 +8,5 @@ const UserSchema = new Schema({
 	twitterId: Number
 });
 
+mongoose.Promise = global.Promise;
 module.exports = mongoose.model('User', UserSchema);

@@ -8,7 +8,7 @@ function error(gw, err) {
 
 function get(gw) {
 	if (gw.pathParams.id) {
-		User.findById(gw.pathParams.id, (err, user) => {
+		User.findById(gw.pathParams.id).lean().exec((err, user) => {
 			err && error(gw, err);
 
 			if (!user) {
@@ -18,9 +18,9 @@ function get(gw) {
 			gw.json(user);
 		});
 	} else {
-		User.find({}, (err, user) => {
+		User.find({}).lean().exec((err, users) => {
 			err && error(gw, err);
-			gw.json(user);
+			gw.json(users);
 		});
 	}
 }

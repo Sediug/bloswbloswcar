@@ -14,11 +14,11 @@ function get(gw) {
 				return gw.error(404,  Error(`El anuncio no existe`));
 			}
 
-			gw.json(announcement, {deep: 0});
+			gw.json(announcement);
 		});
 	} else {
 		dbManager.get(null, (err, announcements) => {
-			gw.json(new Object(announcements), {deep: 0});
+			gw.json(announcements);
 		});
 	}
 }

@@ -3,12 +3,27 @@ const indexBy = require('lodash.indexby');
 const Announcement = require('../model/announcement');
 
 function findAll(cb) {
-	Announcement.find({}, (err, announcements) => {
+	Announcement.find({}).lean(true).exec((err, announcements) => {
 		if (err) {
 			return cb(err, {});
 		}
 
-		cb(null, indexBy(announcements, obj => obj._id));
+		cb(null,
+			indexBy(announcements, obj => {
+				obj._id = String(obj._id);
+				return obj._id;
+			})
+		);
+	});
+}
+
+function find(id, cb) {
+	Announcement.findById(id).lean(true).exec((err, announcement) => {
+		if (err) {
+			return cb(err, {});
+		}
+
+		cb(null, announcement);
 	});
 }
 
@@ -60,8 +75,11 @@ module.exports = {
 				return cb(err, result);
 			}
 
-			this.goblin.set(result, String(result._id));
-			cb(null, result);
+			// Find as to store / get as JSON not mongo doc
+			find(result._id, (error, announcement) => {
+				this.goblin.set(announcement, String(result._id));
+				cb(null, announcement);
+			});
 		});
 	},
 	update: function(id, announcement, cb) {
@@ -71,14 +89,19 @@ module.exports = {
 			delete announcement.created_dtm;
 		}
 
-		Announcement.findOneAndUpdate({_id: id}, announcement, (err, result) => {
-			if (err) {
-				return cb(err, result);
-			}
+		Announcement.findOneAndUpdate(
+			{ _id: id }, // find condition
+			announcement, // update data
+			{ lean: true }, // get result as JSON not mongo doc
+			(err, result) => {
+				if (err) {
+					return cb(err, result);
+				}
 
-			this.goblin.set(result, String(result._id));
-			cb(null, result);
-		});
+				this.goblin.set(result, String(result._id));
+				cb(null, result);
+			}
+		);
 	},
 	delete: function(id, cb) {
 		Announcement.findById(id, (err, announcement) => {
@@ -86,15 +109,16 @@ module.exports = {
 				return cb(err, false);
 			}
 
+			// If exist then remove.
 			announcement.remove(err => {
 				if (err) {
 					return cb(err, false);
 				}
 
-				findAll((err, announcements) => {
-					this.goblin.set(announcements);
-					cb(err, true);
-				});
+				const announcements = this.goblin.get();
+				delete announcements[id];
+				this.goblin.set(announcements);
+				cb(null, true);
 			});
 		});
 	}

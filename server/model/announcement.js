@@ -30,4 +30,5 @@ const AnnouncementSchema = new Schema({
 	updated_dtm: { type: Date, default: Date.now() }
 });
 
+mongoose.Promise = global.Promise;
 module.exports = mongoose.model('Announcement', AnnouncementSchema);
