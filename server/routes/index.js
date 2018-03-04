@@ -1,6 +1,6 @@
 /*global Route */
 const routes = require('pillars').routes;
-const login = require('./login');
+const auth = require('./auth');
 const api = require('./api');
 
 // Static Files and main route
@@ -38,9 +38,10 @@ ioClientRoute.routes.add(new Route({
 	gw.file('./node_modules/socket.io-client/dist/socket.io.js.map');
 }));
 
+
 // Add routes to the server
-console.info('Adding main routes to the server.');
-routes.add(login);
+console.info('Adding routes to the server.');
+routes.add(auth);
 routes.add(api);
 routes.add(ioClientRoute);
 routes.add(mainRoute);
