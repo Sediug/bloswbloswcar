@@ -1,5 +1,6 @@
 const app = require('pillars');
 const mongoose = require('mongoose');
+const opn = require('opn');
 
 // Load .env config.
 console.info('Loading dotenv.');
@@ -18,7 +19,7 @@ console.info('Adding announcements socket.');
 require('./sockets/announcements');
 
 // Configure pillars project and connect to mongoDB
-app.config.debug = process.env.PILLARS_APP_DEBUG_MODE;
+app.config.debug = process.env.DEBUG_MODE;
 // app.config.favicon = "favico.ico";
 
 console.info('Connecting to database.');
@@ -34,6 +35,12 @@ mongoose.connect(process.env.MONGODB_URI, { useMongoClient: true }, err => {
 		port: process.env.PORT
 	}).start();
 
-	console.info(`Server running on http://${ process.env.HOST }:${ process.env.PORT }`);
+	const uri = `http://${ process.env.HOST }:${ process.env.PORT }`;
+	console.info(`Server running on ${ uri }`);
+
+	if (process.env.DEBUG_MODE) {
+		console.info('Opening web browser...');
+		opn(uri);
+	}
 });
 
