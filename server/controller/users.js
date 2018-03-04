@@ -1,9 +1,7 @@
 const User = require('../model/user');
 
 function error(gw, err) {
-	gw.res.status(500).send({
-		message: `Error al realizar la petición: ${err}`
-	});
+	gw.error(500, Error(`Error al realizar la petición: ${err}`));
 }
 
 function get(gw) {
@@ -12,15 +10,15 @@ function get(gw) {
 			err && error(gw, err);
 
 			if (!user) {
-				gw.res.status(404).send({message: `El usuario no existe`});
+				gw.json({message: `El usuario no existe`});
 			}
 
-			gw.json(user);
+			gw.json(user, {deep: 0});
 		});
 	} else {
 		User.find({}).lean().exec((err, users) => {
 			err && error(gw, err);
-			gw.json(users);
+			gw.json(users, {deep: 0});
 		});
 	}
 }
