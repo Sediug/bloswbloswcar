@@ -49,3 +49,25 @@ function render(data) {
 		`);
 	}).join(' ');
 }
+
+document.addEventListener("DOMContentLoaded", e => {
+	const request = new XMLHttpRequest();
+
+	request.onreadystatechange = function() {
+		if (request.status === 200) {
+			const profile = JSON.parse(request.responseText);
+
+			document.getElementById('user-data').innerHTML = (
+				`
+					<img src="${ profile.photos[0].value }"></img>
+					<span class="profile-name">${ profile.username }</span>
+				`
+			);
+		} else {
+			document.getElementById('user-data').innerHTML = 'No hay ningún usuario logueado todavía!';
+		}
+	};
+
+	request.open('Get', '/auth/view'); // Debug purpouse temp
+	request.send();
+});

@@ -1,4 +1,4 @@
-/* Test purpose styles */
+/* Dev purpose styles */
 body {
     padding: 10px 50px 50px 50px;
 }
@@ -33,4 +33,31 @@ section.add-ad {
     margin-bottom: 50px;
 }
 
-/* Test purpose styles */
+.flex {
+   display: -webkit-flex;
+   -webkit-flex-direction: row;
+   display: flex;
+   flex-direction: row;
+}
+
+.flex > div {
+   -webkit-flex: 1 1 auto;
+   flex: 1 1 auto;
+   -webkit-transition: width 0.7s ease-out;
+   transition: width 0.7s ease-out;
+}
+
+#session-info h3 {
+	margin-top: 0;
+}
+
+#user-data img,
+#user-data span {
+	display: block;
+}
+
+#user-data img {
+	max-width: 100px;
+}
+
+/* Dev purpose styles */
