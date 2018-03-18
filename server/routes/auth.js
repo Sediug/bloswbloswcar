@@ -16,14 +16,6 @@ const auth = new Route(
 		session: true    // All sub-routes inherited session support
 	},
 	gw => {
-		// Send links to login options:
-		gw.json({
-			logout: '/auth/logout',
-			loginTwitterUrl,
-			loginGitHubUrl,
-			loginGoogleUrl
-		}, {deep: 0});
-
 		// api info
 		gw.json({
 			description: 'API v1',
