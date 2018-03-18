@@ -23,6 +23,33 @@ const auth = new Route(
 			loginGitHubUrl,
 			loginGoogleUrl
 		}, {deep: 0});
+
+		// api info
+		gw.json({
+			description: 'API v1',
+			endPoints: {
+				auth: {
+					POST: [
+						{
+							url: loginTwitterUrl,
+							description: 'Login using twitter.'
+						},
+						{
+							url: loginGitHubUrl,
+							description: 'Login using github.'
+						},
+						{
+							url: loginGoogleUrl,
+							description: 'Login using google. Not yet working...'
+						},
+						{
+							url: '/auth/logout',
+							description: 'Logout and remove session. Not yet working...'
+						}
+					]
+				}
+			}
+		}, {deep: 0});
 	}
 );
 
@@ -32,7 +59,7 @@ const lgGithub = new Route(
 	{
 		id: 'github',
 		path: '/login/github',
-		method:["get"]
+		method:["post"]
 	},
 	passport.authenticate('github')
 );
@@ -41,7 +68,7 @@ lgGithub.routes.add(new Route(
 	{
 		id: 'ghReturn',
 		path: 'return',
-		method:["get"]
+		method:["post"]
 	},
 	passport.authenticate('github', {
 		successRedirect: loginSuccess,
@@ -54,7 +81,7 @@ const lgGoogle = new Route(
 	{
 		id: 'google',
 		path: '/login/google',
-		method:["get"]
+		method:["post"]
 	},
 	passport.authenticate('google')
 );
@@ -63,7 +90,7 @@ lgGoogle.routes.add(new Route(
 	{
 		id: 'ggReturn',
 		path: 'return',
-		method:["get"]
+		method:["post"]
 	},
 	passport.authenticate('google', {
 		successRedirect: loginSuccess,
@@ -76,7 +103,7 @@ const lgTwitter= new Route(
 	{
 		id: 'twitter',
 		path: '/login/twitter',
-		method:["get"]
+		method:["post"]
 	},
 	passport.authenticate('twitter')
 );
@@ -85,7 +112,7 @@ lgTwitter.routes.add(new Route(
 	{
 		id: 'ggReturn',
 		path: 'return',
-		method:["get"]
+		method:["post"]
 	},
 	passport.authenticate('twitter', {
 		successRedirect: loginSuccess,
@@ -98,7 +125,7 @@ const lgError = new Route(
 	{
 		id: 'login-error',
 		path:'/error',
-		method:["get"]
+		method:["post"]
 	},
 	gw => {
 		const message = `Error de autentificación usando ${ gw.params.from }.`;
@@ -116,7 +143,7 @@ const logout = new Route(
 	{
 		id: 'logOut',
 		path: '/logout',
-		method:["get"]
+		method:["post"]
 	}, gw => {
 		gw.req.user = undefined;
 		gw.session = undefined;
