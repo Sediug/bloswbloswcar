@@ -29,7 +29,7 @@ const auth = new Route(
 			description: 'API v1',
 			endPoints: {
 				auth: {
-					POST: [
+					GET: [
 						{
 							url: loginTwitterUrl,
 							description: 'Login using twitter.'
@@ -59,7 +59,7 @@ const lgGithub = new Route(
 	{
 		id: 'github',
 		path: '/login/github',
-		method:["post"]
+		method:["get"]
 	},
 	passport.authenticate('github')
 );
@@ -68,7 +68,7 @@ lgGithub.routes.add(new Route(
 	{
 		id: 'ghReturn',
 		path: 'return',
-		method:["post"]
+		method:["get"]
 	},
 	passport.authenticate('github', {
 		successRedirect: loginSuccess,
@@ -81,7 +81,7 @@ const lgGoogle = new Route(
 	{
 		id: 'google',
 		path: '/login/google',
-		method:["post"]
+		method:["get"]
 	},
 	passport.authenticate('google')
 );
@@ -90,7 +90,7 @@ lgGoogle.routes.add(new Route(
 	{
 		id: 'ggReturn',
 		path: 'return',
-		method:["post"]
+		method:["get"]
 	},
 	passport.authenticate('google', {
 		successRedirect: loginSuccess,
@@ -103,7 +103,7 @@ const lgTwitter= new Route(
 	{
 		id: 'twitter',
 		path: '/login/twitter',
-		method:["post"]
+		method:["get"]
 	},
 	passport.authenticate('twitter')
 );
@@ -112,7 +112,7 @@ lgTwitter.routes.add(new Route(
 	{
 		id: 'ggReturn',
 		path: 'return',
-		method:["post"]
+		method:["get"]
 	},
 	passport.authenticate('twitter', {
 		successRedirect: loginSuccess,
@@ -125,7 +125,7 @@ const lgError = new Route(
 	{
 		id: 'login-error',
 		path:'/error',
-		method:["post"]
+		method:["get"]
 	},
 	gw => {
 		const message = `Error de autentificación usando ${ gw.params.from }.`;
@@ -143,7 +143,7 @@ const logout = new Route(
 	{
 		id: 'logOut',
 		path: '/logout',
-		method:["post"]
+		method:["get"]
 	}, gw => {
 		gw.req.user = undefined;
 		gw.session = undefined;
