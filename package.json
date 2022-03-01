@@ -1,9 +1,11 @@
 {
   "name": "bloswbloswcar",
   "version": "0.0.1",
-  "description": "A platform to publish your car trips and share expenses with other people.",
-  "main": "server.js",
-  "scripts": {},
+  "description": "",
+  "main": "server/app.js",
+  "scripts": {
+    "start": "node server/app.js"
+  },
   "readme": "README.md",
   "repository": {
     "type": "git",
@@ -29,11 +31,21 @@
   },
   "homepage": "https://github.com/baumannzone/bloswbloswcar#readme",
   "dependencies": {
-
+    "@goblindb/goblindb": "0.0.10",
+    "connect-ensure-login": "^0.1.1",
+    "dotenv": "^5.0.1",
+    "lodash.indexby": "^3.1.1",
+    "moment": "^2.21.0",
+    "mongoose": "^4.13.11",
+    "opn": "^5.2.0",
+    "passport": "^0.4.0",
+    "passport-github": "^1.1.0",
+    "passport-google-oauth20": "^1.0.0",
+    "passport-twitter": "^1.0.4",
+    "pillars": "^0.6.4",
+    "socket.io": "2.0.4"
   },
   "devDependencies": {
-    "mocha-sinon": "1.1.6",
-    "sinon": "1.17.7",
     "chai": "3.5.0",
     "chai-fs": "1.0.0",
     "gulp": "3.9.1",
@@ -43,6 +55,8 @@
     "gulp-jsdoc3": "1.0.1",
     "gulp-mocha": "3.0.1",
     "gulp-util": "3.0.8",
-    "mocha": "3.1.2"
+    "mocha": "3.1.2",
+    "mocha-sinon": "1.1.6",
+    "sinon": "1.17.7"
   }
 }

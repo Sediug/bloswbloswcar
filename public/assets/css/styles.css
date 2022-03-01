@@ -1,0 +1,63 @@
+/* Dev purpose styles */
+body {
+    padding: 10px 50px 50px 50px;
+}
+
+.announcement {
+    width: 300px;
+    float: left;
+    margin-right: 10px;
+    margin-bottom: 10px;
+    border: 1px solid red;
+    padding: 10px;
+    background: #eee;
+}
+
+.announcement h3 {
+    text-align: center;
+    color: #92233c;
+}
+
+.announcement p {
+    text-align: justify;
+    color: rgb(56, 8, 8)
+}
+
+section.add-ad {
+    background: rgb(139, 67, 67);
+    margin-top: 10px;
+    width: 300px;
+    padding: 5px;
+    border: 1px solid #ddd;
+    float: left;
+    margin-bottom: 50px;
+}
+
+.flex {
+   display: -webkit-flex;
+   -webkit-flex-direction: row;
+   display: flex;
+   flex-direction: row;
+}
+
+.flex > div {
+   -webkit-flex: 1 1 auto;
+   flex: 1 1 auto;
+   -webkit-transition: width 0.7s ease-out;
+   transition: width 0.7s ease-out;
+}
+
+#session-info h3 {
+	margin-top: 0;
+}
+
+#user-data img,
+#user-data span {
+	display: block;
+}
+
+#user-data img {
+	max-width: 100px;
+}
+
+/* Dev purpose styles */

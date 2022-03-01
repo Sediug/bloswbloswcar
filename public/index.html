@@ -2,8 +2,36 @@
 <html>
 	<head>
 		<title>Bloswblowscar - OSW</title>
+
+		<!-- Load styles -->
+		<link rel="stylesheet" href="/assets/css/styles.css" />
 	</head>
 	<body>
 		<h1>Bloswbloswcar app</h1>
+		<section id="logins" class="flex" style="border: 1px solid #ccc; padding: 10px; margin: 15px 0;">
+			<div id="login-links">
+				<a href="/auth/login/google" style="display: block;">Log in con Google</a>
+				<a href="/auth/login/twitter" style="display: block;">Log in con Twitter</a>
+				<a href="/auth/login/github" style="display: block;">Log in con Github</a>
+				<a href="/auth/logout" style="display: block;">Logout</a>
+			</div>
+			<div id="session-info" style="display: block; float: right;">
+				<h3>Información del Usuario logeado:</h3>
+				<div id="user-data"></div>
+			</div>
+		</section>
+		<div class="ads"></div>
+		<section class="add-ad">
+			<input id="title" type="text" style="display: block;" placeholder="Título"></input>
+			<textarea id="description" style="display: block;" placeholder="Descripcion"></textarea>
+			<input id="from" type="text" style="display: block;" placeholder="Salida desde..."></input>
+			<input id="to" type="text" style="display: block;" placeholder="Destino..."></input>
+			<input id="date" type="date" style="display: block;" placeholder="Fecha"></input>
+			<button id="addAnAnnouncement" type="button">Add</button>
+		</section>
+
+		<!-- Load scripts -->
+		<script src="/socket.io.js"></script>
+		<script src="assets/js/main.js"></script>
 	</body>
 </html>
